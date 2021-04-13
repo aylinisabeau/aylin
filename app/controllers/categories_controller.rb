@@ -1,6 +1,5 @@
 class CategoriesController < ApplicationController
   def index
-    render json: Category.all, status: :ok
     @categories = Category.all
       .page(paginatable_params[:page])
       .per(paginatable_params[:per_page])

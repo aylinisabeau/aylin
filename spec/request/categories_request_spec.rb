@@ -1,4 +1,5 @@
 require 'rails_helper'
+
 RSpec.describe "Categories", type: :request do
   describe "GET /categories" do
     before(:all) do
@@ -8,16 +9,14 @@ RSpec.describe "Categories", type: :request do
     end
 
     it "should get all the categories" do
-      scoped_data = Category.all
-      expect(@response_data.map{ |d| d["id"] }).to match_array(scoped_data.map(&:id))
       scoped_data = Category.all.limit(10)
       expect(@response_data["data"].map{ |d| d["id"] }).to match_array(scoped_data.map(&:id))
     end
+
     it "should have :ok status" do
       expect(response.status).to eq(200)
     end
 
-    # include_examples "paginated list"
     include_examples "paginated list"
   end
 end
