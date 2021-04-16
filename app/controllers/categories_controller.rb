@@ -1,5 +1,5 @@
 class CategoriesController < ApplicationController
-  before_action :find_category, only: [:show]
+  before_action :find_category, only: [:show, :update]
 
   def index
     @categories = Category.all
@@ -19,6 +19,15 @@ class CategoriesController < ApplicationController
   def create
     @category = Category.new(categories_params)
     if @category.save
+      render json: @category, status: :created
+    else
+      render json: {  messages: @category.errors }, status: :unprocessable_entity
+    end
+  end
+
+  def update
+
+    if @category.update(categories_params)
       render json: @category, status: :created
     else
       render json: { messages: @category.errors }, status: :unprocessable_entity

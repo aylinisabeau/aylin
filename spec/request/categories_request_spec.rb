@@ -64,5 +64,56 @@ RSpec.describe "Categories", type: :request do
     end
   end
 
-  describe  "PUT / categories /: id"
+  describe  "PUT / categories /: id"do
+   context "valid category" do
+      before(:all)do
+        @category = FactoryBot.create(:category)
+
+        @categories_params = {
+          name: "Hola Aylin",
+          active_status: false
+        }
+
+        put category_path(@category), params: { category: @categories_params}
+        @response_data = JSON.parse(response.body)
+     end
+
+     it "should response with :ok" do
+      expect(response.status).to eq 201
+     end
+
+     it "should have updated the category" do
+      expect(@response_data["name"]).to eq @categories_params[:name]
+      expect(@response_data["active_status"]).to eq @categories_params[:active_status]
+     end
+    end
+
+    context "invalid category"do
+      before(:all)do
+        @category = FactoryBot.create(:category)
+
+        @categories_params = {
+          name: "",
+          active_status: false
+        }
+
+        put category_path(@category), params: { category: @categories_params }
+        @response_data = JSON.parse(response.body)
+      end
+
+      it "should response with :unprocessable_entity" do
+        expect(response.status).to eq 422
+      end
+      it "should not have updated category"do
+        expect(Category.find(@category.id).name).to eq @category.name
+        expect(Category.find(@category.id).active_status).to eq @category.active_status
+      end
+
+      it "should have an error message"do
+        expect(@response_data["messages"]["name"]).to include"can't be blank"
+      end
+    end
+
+  end
+
 end
