@@ -1,0 +1,18 @@
+require 'rails_helper'
+RSpec.describe "Products", type: :request do
+  describe "GET   /products" do
+    before(:all) do
+      FactoryBot.create_list :product, 20
+      get products_path
+      @response_data = JSON.parse(response.body)
+    end
+    it "should get all the products" do
+      scoped_data = Product.all.limit(10)
+      expect(@response_data["data"].map{ |d| d["id"] }).to match_array(scoped_data.map(&:id))
+    end
+    it "should have :ok status" do
+      expect(response.status).to eq (200)
+    end
+    include_examples "paginated list"
+  end
+end
