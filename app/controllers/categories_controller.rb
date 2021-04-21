@@ -6,7 +6,6 @@ class CategoriesController < ApplicationController
       .page(paginatable_params[:page])
       .per(paginatable_params[:per_page])
     render json: {
-      data: @categories,
       data: ActiveModel::Serializer::CollectionSerializer.new(@categories, serializer: CategorySerializer),
       meta: { pagination: pagination(@categories, paginatable_params) }
     }
