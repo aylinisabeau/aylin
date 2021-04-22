@@ -20,7 +20,7 @@ RSpec.describe "Sessions", type: :request do
                 user = User.find(@response_data["id"])
                 payload = {
                     id: user.id,
-                    valid_until: Time.zone.now + 1.day
+                    valid_until: user.last_login + 1.day
                 }
                 token = JWT.encode payload, ENV['SECRET_KEY_BASE'], 'HS256'
                 expect(@response_data["token"]).to eq token
@@ -32,7 +32,9 @@ RSpec.describe "Sessions", type: :request do
         end
         context "invalid credentials" do
             before(:all) do
-
+                @user = FactoryBot.create :user
+                post "/login", params: { auth: { email: @user.email, password: "NO ES" } }
+                @response_data = JSON.parse(response.body)
             end
             it "should respond with :unprocessable_entity" do
                 expect(response.status).to eq 422

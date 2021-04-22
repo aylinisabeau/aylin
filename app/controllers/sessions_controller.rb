@@ -4,7 +4,7 @@ class SessionsController < ApplicationController
         if @user.errors.empty?
             render json: @user
         else
-            render json: @user.errors.full_messages, status: :unprocessable_entity
+            render json: { messages: @user.errors.full_messages }, status: :unprocessable_entity
         end
     end
 
