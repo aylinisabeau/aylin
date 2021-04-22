@@ -22,7 +22,7 @@ RSpec.describe "Sessions", type: :request do
                     id: user.id,
                     valid_until: user.last_login + 1.day
                 }
-                token = JWT.encode payload, ENV['SECRET_KEY_BASE'], 'HS256'
+                token = JWT.encode payload, Rails.application.credentials.secret_key_base, 'HS256'
                 expect(@response_data["token"]).to eq token
             end
 
