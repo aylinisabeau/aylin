@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :category do
-    name { FFaker::Movie.title}
+    sequence(:name) { |n| "#{FFaker::Movie.title}_#{n}" }
     description {FFaker::Lorem.paragraph}
   end
 end
