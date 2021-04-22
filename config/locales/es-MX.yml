@@ -1,0 +1,4 @@
+es-MX:
+  error:
+    messages:
+      invalid_credentials: Correo o password invalido

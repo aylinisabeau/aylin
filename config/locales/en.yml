@@ -31,3 +31,6 @@
 
 en:
   hello: "Hello world"
+  error:
+    messages:
+      invalid_credentials: Email and password does not match
