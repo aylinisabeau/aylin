@@ -3,6 +3,7 @@ ARG USER_ID=1000
 ARG GROUP_ID=1000
 
 RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
+RUN apt-get install vim -y
 WORKDIR /myapp
 
 COPY entrypoint.sh /usr/bin/
