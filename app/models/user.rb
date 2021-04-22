@@ -25,6 +25,7 @@ class User < ApplicationRecord
             user.token = JWT.encode payload, Rails.application.credentials.secret_key_base, 'HS256'
             return user
         else
+            user = User.new
             user.errors.add(:base, I18n.t("error.messages.invalid_credentials"))
             return user
         end
