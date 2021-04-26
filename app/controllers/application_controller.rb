@@ -5,12 +5,16 @@ class ApplicationController < ActionController::Base
         return render json: { messages: [I18n.t("error.messages.unauthenticated")]}, status: 401 if request.headers["Authorization"].blank?
         begin
             payload = JWT.decode request.headers["Authorization"].delete_prefix("Bearer "), Rails.application.credentials.secret_key_base, 'HS256'
+            if payload[0]["valid_until"] < Time.zone.now
+                return render json: { messages: [I18n.t("error.messages.unauthenticated")]}, status: 401
+            end
             # Add the @current_user
             @current_user = User.find payload[0]["id"]
         rescue
             # render :unauthenticated if invalid token
             return render json: { messages: [I18n.t("error.messages.unauthenticated")]}, status: 401
         end
+
     end
 
     protected

@@ -4,4 +4,5 @@ Rails.application.routes.draw do
   resources :products, except: [:new, :edit, :destroy]
 
   post 'login' => 'sessions#login'
+  post 'persist' => 'sessions#persist'
 end

@@ -1,10 +1,20 @@
 class SessionsController < ApplicationController
+    before_action :authenticate_user, only: [:persist]
     def login
         @user = User.login(login_params)
         if @user.errors.empty?
             render json: @user
         else
             render json: { messages: @user.errors.full_messages }, status: :unprocessable_entity
+        end
+    end
+
+    def persist
+        @current_user.generate_token(login_params)
+        if @current_user.errors.empty?
+            render json: @current_user
+        else
+            render json: { messages: @current_user.errors.full_messages }, status: :unprocessable_entity
         end
     end
 

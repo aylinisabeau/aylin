@@ -44,4 +44,23 @@ RSpec.describe "Sessions", type: :request do
             end
         end
     end
+
+    describe "POST /persist" do
+        before(:all) do
+            @current_user = FactoryBot.create :user
+            login(@current_user)
+            post "/login", params: { auth: { email: @current_user.email, password: @current_user.password } }
+            @response_data = JSON.parse(response.body)
+        end
+
+        it "should have a new token" do
+            @current_user = @current_user.generate_token
+            post "/persist"
+            expect(@response_data).to have_key("token")
+            expect(@response_data["token"]).to eq @current_user
+        end
+        it "should be able to access an authenticated resource with that new token" do
+
+        end
+    end
 end
