@@ -17,7 +17,7 @@ class User < ApplicationRecord
         user = User.find_by_email(params[:email])
         if user && user.authenticate(params[:password])
             user.update last_login: Time.zone.now
-            user.valid_until = user.last_login + 1.day
+            user.valid_until = user.last_login + 30.minutes
             user.generate_token
             return user
         else
@@ -31,7 +31,7 @@ class User < ApplicationRecord
     def generate_token
         payload = {
             id: self.id,
-            valid_until: self.valid_until
+            exp: self.valid_until.to_i
         }
         self.token = JWT.encode payload, Rails.application.credentials.secret_key_base, 'HS256'
     end
