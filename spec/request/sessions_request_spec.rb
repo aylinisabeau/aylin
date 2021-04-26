@@ -18,12 +18,9 @@ RSpec.describe "Sessions", type: :request do
 
             it "should have a valid JWT Token" do
                 user = User.find(@response_data["id"])
-                payload = {
-                    id: user.id,
-                    valid_until: user.last_login + 1.day
-                }
-                token = JWT.encode payload, Rails.application.credentials.secret_key_base, 'HS256'
-                expect(@response_data["token"]).to eq token
+                user.valid_until = user.last_login + 30.minutes
+                user.generate_token
+                expect(@response_data["token"]).to eq user.token
             end
 
             it "should update the user last_login" do
@@ -49,18 +46,23 @@ RSpec.describe "Sessions", type: :request do
         before(:all) do
             @current_user = FactoryBot.create :user
             login(@current_user)
-            post "/login", params: { auth: { email: @current_user.email, password: @current_user.password } }
+            @first_response = JSON.parse(response.body)
+            @first_auth_token = @first_response["token"]
+            @auth_headers = get_auth_header(response)
+            sleep 1
+            post "/persist", headers: @auth_headers
             @response_data = JSON.parse(response.body)
         end
 
         it "should have a new token" do
-            @current_user = @current_user.generate_token
-            post "/persist"
             expect(@response_data).to have_key("token")
-            expect(@response_data["token"]).to eq @current_user
+            expect(@response_data["token"]).not_to eq @first_auth_token
         end
-        it "should be able to access an authenticated resource with that new token" do
 
+        it "should be able to access an authenticated resource with that new token" do
+            get products_path, headers: get_auth_header(response)
+
+            expect(response.status).to eq 200
         end
     end
 end

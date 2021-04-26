@@ -10,7 +10,8 @@ class SessionsController < ApplicationController
     end
 
     def persist
-        @current_user.generate_token(login_params)
+        @current_user.valid_until = Time.zone.now + 30.minutes
+        @current_user.generate_token
         if @current_user.errors.empty?
             render json: @current_user
         else
